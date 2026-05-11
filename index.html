@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPE Prospector — Century 21 La Motte Picquet</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --accent: #1d4ed8;
+    --accent2: #3b82f6;
+    --green: #1a7f4b;
+    --green-light: #0d4429;
+    --dpe-a: #009F6B;
+    --dpe-b: #51B748;
+    --dpe-c: #CADD43;
+    --dpe-d: #F5E800;
+    --dpe-e: #F0A800;
+    --dpe-f: #E4581B;
+    --dpe-g: #D7221F;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0a1628 0%, #0f2942 60%, #1a3a5c 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  .header-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 64px;
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+
+  .logo span { color: var(--accent2); }
+
+  .header-stats {
+    display: flex;
+    gap: 24px;
+    margin-left: auto;
+  }
+
+  .stat-pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-pill strong { color: #fff; font-size: 14px; }
+
+  /* TOOLBAR */
+  .toolbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  select, input[type="text"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  select:hover, input:hover { border-color: var(--accent2); }
+  select:focus, input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+
+  input[type="text"] { width: 220px; }
+  input::placeholder { color: var(--text2); }
+
+  .btn-reset {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-reset:hover { border-color: var(--accent2); color: var(--text); }
+
+  .count-badge {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  /* TABLE */
+  .table-wrap {
+    max-width: 1600px;
+    margin: 24px auto;
+    padding: 0 32px 48px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: var(--surface);
+    color: var(--text2);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+    position: sticky;
+    top: 64px;
+    z-index: 10;
+  }
+
+  thead th:first-child { border-radius: 8px 0 0 0; }
+  thead th:last-child { border-radius: 0 8px 0 0; }
+
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--accent2); }
+  th.sortable.asc .sort-icon::after { content: " ↑"; }
+  th.sortable.desc .sort-icon::after { content: " ↓"; }
+  .sort-icon { color: var(--text2); font-size: 10px; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody tr.row-g { background: rgba(215,34,31,0.06); }
+  tbody tr.row-g:hover { background: rgba(215,34,31,0.1); }
+
+  td {
+    padding: 11px 14px;
+    vertical-align: middle;
+    color: var(--text);
+  }
+
+  .td-num {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--text2);
+    white-space: nowrap;
+  }
+
+  .td-date { white-space: nowrap; color: var(--text2); font-size: 12px; }
+
+  .td-adresse strong { display: block; font-weight: 500; font-size: 13px; }
+  .td-adresse small { color: var(--text2); font-size: 11px; }
+  .td-adresse a { color: inherit; text-decoration: none; }
+  .td-adresse a:hover strong { color: var(--accent2); }
+
+  /* DPE BADGE */
+  .badge-dpe {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-weight: 900;
+    font-size: 15px;
+    color: #fff;
+  }
+
+  .badge-dpe.C, .badge-dpe.D { color: #111; }
+
+  /* ZONE BADGE */
+  .badge-zone {
+    display: inline-block;
+    background: rgba(59,130,246,0.12);
+    border: 1px solid rgba(59,130,246,0.25);
+    color: var(--accent2);
+    border-radius: 12px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* LOGEMENT BADGE */
+  .badge-log {
+    display: inline-block;
+    border-radius: 12px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-log.appart { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); color: #34d399; }
+  .badge-log.maison { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); color: #34d399; }
+  .badge-log.collectif { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25); color: var(--accent2); }
+
+  /* TYPE BADGE */
+  .badge-type {
+    display: inline-block;
+    border-radius: 12px;
+    padding: 2px 9px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .badge-type.renouv { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); color: #34d399; }
+  .badge-type.premier { background: rgba(139,148,158,0.12); border: 1px solid var(--border); color: var(--text2); }
+
+  /* STATUT SELECT */
+  .statut-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    width: 130px;
+  }
+
+  /* CONSEILLER SELECT */
+  .conseiller-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    width: 110px;
+  }
+
+  /* LIEN ATTESTATION */
+  .btn-voir {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .btn-voir:hover { background: var(--accent2); }
+
+  /* VIDE */
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text2);
+  }
+  .empty h3 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
+
+  /* PASSOIRE */
+  .passoire-tag {
+    display: block;
+    font-size: 9px;
+    color: var(--dpe-g);
+    font-weight: 700;
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .header-stats { display: none; }
+    .toolbar-inner { gap: 8px; }
+    .table-wrap { padding: 0 12px 48px; }
+  }
+
+  /* NOTIFICATION SAUVEGARDE */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green);
+    color: #fff;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  .surface-val { color: var(--text2); font-size: 12px; }
+  .etage-val { color: var(--text2); font-size: 12px; }
+  .digicode-val { font-family: monospace; font-size: 12px; color: #fbbf24; }
+
+  .no-data { color: var(--text2); opacity: 0.4; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ÉCRAN DE CONNEXION -->
+<div id="login-screen" style="
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#0a1628 0%,#0f2942 100%);
+  display:flex;align-items:center;justify-content:center;
+">
+  <div style="
+    background:#161b22;border:1px solid #30363d;
+    border-radius:16px;padding:48px 40px;
+    width:100%;max-width:380px;text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  ">
+    <div style="font-size:36px;margin-bottom:16px;">🏠</div>
+    <div style="font-family:'DM Serif Display',serif;font-size:22px;color:#fff;margin-bottom:6px;">DPE Prospector</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:32px;">Century 21 La Motte Picquet</div>
+    <input type="password" id="pwd-input" placeholder="Mot de passe"
+      style="
+        width:100%;background:#0d1117;border:1px solid #30363d;
+        color:#e6edf3;border-radius:8px;padding:12px 16px;
+        font-size:14px;font-family:inherit;outline:none;
+        box-sizing:border-box;margin-bottom:12px;
+        transition:border-color 0.2s;
+      "
+      onkeydown="if(event.key==='Enter') checkPassword()"
+    >
+    <div id="pwd-error" style="color:#ef4444;font-size:12px;margin-bottom:12px;height:16px;"></div>
+    <button onclick="checkPassword()" style="
+      width:100%;background:#1d4ed8;color:#fff;border:none;
+      border-radius:8px;padding:12px;font-size:14px;font-weight:600;
+      font-family:inherit;cursor:pointer;transition:background 0.2s;
+    "
+    onmouseover="this.style.background='#3b82f6'"
+    onmouseout="this.style.background='#1d4ed8'"
+    >Accéder →</button>
+  </div>
+</div>
+
+<script>
+const PASSWORD = 'Motte75015!';
+function checkPassword() {
+  const input = document.getElementById('pwd-input').value;
+  if (input === PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    sessionStorage.setItem('dpe_auth', '1');
+  } else {
+    document.getElementById('pwd-error').textContent = '❌ Mot de passe incorrect';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+// Vérifier si déjà authentifié dans cette session
+if (sessionStorage.getItem('dpe_auth') === '1') {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('login-screen').style.display = 'none';
+  });
+}
+</script>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">DPE <span>Prospector</span></div>
+    <div style="font-size:12px;color:#64748b;">Century 21 La Motte Picquet</div>
+    <div class="header-stats">
+      <div class="stat-pill">Total <strong id="stat-total">—</strong></div>
+      <div class="stat-pill">🔴 Passoires <strong id="stat-g">—</strong></div>
+      <div class="stat-pill">🔄 Renouvellements <strong id="stat-renouv">—</strong></div>
+      <div class="stat-pill">Dernière MAJ <strong id="stat-date">—</strong></div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <input type="text" id="search" placeholder="🔍 Rechercher une adresse...">
+
+    <select id="filter-zone">
+      <option value="">Toutes les zones</option>
+      <option value="La Motte Picquet">La Motte Picquet</option>
+    </select>
+
+    <select id="filter-dpe">
+      <option value="">Toutes étiquettes</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+      <option value="E">E</option>
+      <option value="F">F</option>
+      <option value="G">🔴 G — Passoires</option>
+    </select>
+
+    <select id="filter-statut">
+      <option value="">Tous statuts</option>
+      <option value="À prospecter">À prospecter</option>
+      <option value="Contacté">Contacté</option>
+      <option value="RDV pris">RDV pris</option>
+      <option value="Mandat signé">Mandat signé</option>
+      <option value="Client agence">Client agence</option>
+      <option value="Sans suite">Sans suite</option>
+    </select>
+
+    <select id="filter-conseiller">
+      <option value="">Tous conseillers</option>
+      <option value="À attribuer">À attribuer</option>
+      <option value="Jean-Marie">Jean-Marie</option>
+      <option value="Bérénice">Bérénice</option>
+      <option value="Joël">Joël</option>
+      <option value="Marc-Antoine">Marc-Antoine</option>
+      <option value="Charles">Charles</option>
+    </select>
+
+    <select id="filter-type">
+      <option value="">Tous types</option>
+      <option value="renouv">🔄 Renouvellement</option>
+      <option value="premier">🆕 Premier DPE</option>
+    </select>
+
+    <select id="filter-logement">
+      <option value="">Tous logements</option>
+      <option value="appartement">🏠 Appartement</option>
+      <option value="maison">🏠 Maison</option>
+      <option value="immeuble">🏢 Collectif</option>
+    </select>
+
+    <button class="btn-reset" onclick="resetFiltres()">✕ Réinitialiser</button>
+
+    <span class="count-badge" id="count-badge"></span>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="table-dpe">
+    <thead>
+      <tr>
+        <th class="sortable" onclick="sortTable('date')">Date <span class="sort-icon" id="sort-date">↕</span></th>
+        <th>N° DPE</th>
+        <th class="sortable" onclick="sortTable('adresse')">Adresse <span class="sort-icon" id="sort-adresse">↕</span></th>
+        <th class="sortable" onclick="sortTable('zone')">Zone <span class="sort-icon" id="sort-zone">↕</span></th>
+        <th class="sortable" onclick="sortTable('dpe')">DPE <span class="sort-icon" id="sort-dpe">↕</span></th>
+        <th>Logement</th>
+        <th class="sortable" onclick="sortTable('surface')">Surface <span class="sort-icon" id="sort-surface">↕</span></th>
+        <th>Étage</th>
+        <th>Digicode</th>
+        <th>Type</th>
+        <th class="sortable" onclick="sortTable('statut')">Statut <span class="sort-icon" id="sort-statut">↕</span></th>
+        <th class="sortable" onclick="sortTable('conseiller')">Conseiller <span class="sort-icon" id="sort-conseiller">↕</span></th>
+        <th>Attestation</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="empty" id="empty" style="display:none;">
+    <h3>Aucun DPE trouvé</h3>
+    <p>Modifie les filtres pour voir plus de résultats.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ Sauvegardé</div>
+
+<script>
+const COULEURS_DPE = {
+  A:'#009F6B', B:'#51B748', C:'#CADD43',
+  D:'#F5E800', E:'#F0A800', F:'#E4581B', G:'#D7221F'
+};
+const TEXTE_DPE = { C:'#111', D:'#111' };
+const CONSEILLERS = ['À attribuer', 'Jean-Marie', 'Bérénice', 'Joël', 'Marc-Antoine', 'Charles'];
+const STATUTS = ['À prospecter', 'Contacté', 'RDV pris', 'Mandat signé', 'Client agence', 'Sans suite'];
+
+let allDpe = [];
+let assignments = {};
+
+// Charger les assignments depuis localStorage
+function loadAssignments() {
+  try { assignments = JSON.parse(localStorage.getItem('dpe_assignments') || '{}'); }
+  catch(e) { assignments = {}; }
+}
+
+function saveAssignments() {
+  localStorage.setItem('dpe_assignments', JSON.stringify(assignments));
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function formaterDate(d) {
+  if (!d) return '—';
+  const [y, m, j] = d.split('-');
+  return `${j}/${m}/${y}`;
+}
+
+function renderRow(dpe) {
+  const id = dpe.numero_dpe;
+  const a = assignments[id] || {};
+  const statut = a.statut || 'À prospecter';
+  const conseiller = a.conseiller || 'À attribuer';
+  const etiquette = (dpe.etiquette_dpe || '?').toUpperCase();
+  const couleur = COULEURS_DPE[etiquette] || '#555';
+  const txtColor = TEXTE_DPE[etiquette] || '#fff';
+  const isG = etiquette === 'G';
+  const isRenouv = !!dpe.numero_dpe_remplace;
+  const typeBat = (dpe.type_batiment || '').toLowerCase();
+  const adresseEncoded = encodeURIComponent(dpe.adresse_ban || '');
+  const surface = dpe.surface_habitable_logement || dpe.surface_habitable_immeuble;
+  const etage = dpe.etage_str || '—';
+  const digicode = dpe.digicode_str || '—';
+  const zone = dpe.zone || '';
+
+  let badgeLog = '';
+  if (typeBat === 'immeuble') badgeLog = '<span class="badge-log collectif">🏢 Collectif</span>';
+  else if (typeBat === 'appartement') badgeLog = '<span class="badge-log appart">🏠 Appart.</span>';
+  else if (typeBat === 'maison') badgeLog = '<span class="badge-log maison">🏠 Maison</span>';
+  else badgeLog = `<span class="badge-log">${typeBat || '?'}</span>`;
+
+  const statutOptions = STATUTS.map(s =>
+    `<option value="${s}" ${statut === s ? 'selected' : ''}>${s}</option>`
+  ).join('');
+
+  const conseillerOptions = CONSEILLERS.map(c =>
+    `<option value="${c}" ${conseiller === c ? 'selected' : ''}>${c || '—'}</option>`
+  ).join('');
+
+  return `
+  <tr class="${isG ? 'row-g' : ''}" data-zone="${zone}" data-dpe="${etiquette}" data-renouv="${isRenouv}" data-statut="${statut}" data-conseiller="${conseiller}" data-adresse="${(dpe.adresse_ban||'').toLowerCase()}" data-logement="${typeBat}">
+    <td class="td-date">${formaterDate(dpe.date_reception_dpe)}</td>
+    <td class="td-num">${id}</td>
+    <td class="td-adresse">
+      <a href="https://www.google.com/maps/search/?api=1&query=${adresseEncoded}" target="_blank">
+        <strong>${dpe.adresse_ban || '—'}</strong>
+      </a>
+      <small>${dpe.code_postal_ban || ''} ${dpe.nom_commune_ban || ''}</small>
+    </td>
+    <td><span class="badge-zone">${zone || '—'}</span></td>
+    <td>
+      <span class="badge-dpe ${etiquette}" style="background:${couleur};color:${txtColor};">${etiquette}</span>
+      ${isG ? '<span class="passoire-tag">⚠️ Passoire</span>' : ''}
+    </td>
+    <td>${badgeLog}</td>
+    <td class="surface-val">${surface ? Math.round(surface) + ' m²' : '<span class="no-data">—</span>'}</td>
+    <td class="etage-val">${etage !== '—' ? etage : '<span class="no-data">—</span>'}</td>
+    <td class="digicode-val">${digicode !== '—' ? digicode : '<span class="no-data">—</span>'}</td>
+    <td>
+      ${isRenouv
+        ? '<span class="badge-type renouv">🔄 Renouvellement</span>'
+        : '<span class="badge-type premier">🆕 Premier</span>'}
+    </td>
+    <td>
+      <select class="statut-select" onchange="updateAssignment('${id}','statut',this.value)">
+        ${statutOptions}
+      </select>
+    </td>
+    <td>
+      <select class="conseiller-select" onchange="updateAssignment('${id}','conseiller',this.value)">
+        ${conseillerOptions}
+      </select>
+    </td>
+    <td>
+      <a class="btn-voir" href="https://observatoire-dpe-audit.ademe.fr/afficher-dpe/${id}" target="_blank">Voir →</a>
+    </td>
+  </tr>`;
+}
+
+function updateAssignment(id, key, value) {
+  if (!assignments[id]) assignments[id] = {};
+  assignments[id][key] = value;
+  // Mettre à jour les data attrs pour le filtrage
+  const row = document.querySelector(`tr[data-adresse] select[onchange*="${id}"]`)?.closest('tr');
+  if (row) {
+    row.dataset[key === 'statut' ? 'statut' : 'conseiller'] = value;
+  }
+  saveAssignments();
+  applyFiltres();
+}
+
+function applyFiltres() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const zone = document.getElementById('filter-zone').value;
+  const dpe = document.getElementById('filter-dpe').value;
+  const statut = document.getElementById('filter-statut').value;
+  const conseiller = document.getElementById('filter-conseiller').value;
+  const type = document.getElementById('filter-type').value;
+  const logement = document.getElementById('filter-logement').value;
+
+  const rows = document.querySelectorAll('#tbody tr');
+  let visible = 0;
+
+  rows.forEach(row => {
+    const matchSearch = !search || row.dataset.adresse.includes(search);
+    const matchZone = !zone || row.dataset.zone === zone;
+    const matchDpe = !dpe || row.dataset.dpe === dpe;
+    const matchStatut = !statut || row.dataset.statut === statut;
+    const matchConseiller = !conseiller || row.dataset.conseiller === conseiller;
+    const matchType = !type ||
+      (type === 'renouv' && row.dataset.renouv === 'true') ||
+      (type === 'premier' && row.dataset.renouv === 'false');
+    const matchLogement = !logement || row.dataset.logement === logement;
+
+    const show = matchSearch && matchZone && matchDpe && matchStatut && matchConseiller && matchType && matchLogement;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+
+  document.getElementById('count-badge').textContent = `${visible} DPE affichés`;
+  document.getElementById('empty').style.display = visible === 0 ? 'block' : 'none';
+  document.getElementById('table-dpe').style.display = visible === 0 ? 'none' : '';
+}
+
+function resetFiltres() {
+  document.getElementById('search').value = '';
+  document.getElementById('filter-zone').value = '';
+  document.getElementById('filter-dpe').value = '';
+  document.getElementById('filter-statut').value = '';
+  document.getElementById('filter-conseiller').value = '';
+  document.getElementById('filter-type').value = '';
+  document.getElementById('filter-logement').value = '';
+  applyFiltres();
+}
+
+function updateStats(dpes) {
+  document.getElementById('stat-total').textContent = dpes.length;
+  document.getElementById('stat-g').textContent = dpes.filter(d => (d.etiquette_dpe||'').toUpperCase() === 'G').length;
+  document.getElementById('stat-renouv').textContent = dpes.filter(d => d.numero_dpe_remplace).length;
+  const dates = dpes.map(d => d.date_reception_dpe).filter(Boolean).sort();
+  if (dates.length) {
+    document.getElementById('stat-date').textContent = formaterDate(dates[dates.length-1]);
+  }
+}
+
+let currentSort = { col: 'date', dir: 'desc' };
+
+function sortTable(col) {
+  if (currentSort.col === col) {
+    currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    currentSort.col = col;
+    currentSort.dir = col === 'date' ? 'desc' : 'asc';
+  }
+
+  // Mettre à jour les icônes
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.classList.remove('asc', 'desc');
+  });
+  const th = document.querySelector(`th[onclick="sortTable('${col}')"]`);
+  if (th) th.classList.add(currentSort.dir);
+
+  const tbody = document.getElementById('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+
+  const getValue = (row) => {
+    switch(col) {
+      case 'date': return row.querySelector('.td-date')?.textContent.trim().split('/').reverse().join('') || '';
+      case 'adresse': return row.querySelector('.td-adresse strong')?.textContent.trim().toLowerCase() || '';
+      case 'zone': return row.dataset.zone || '';
+      case 'dpe': return row.dataset.dpe || '';
+      case 'surface': return parseFloat(row.querySelector('.surface-val')?.textContent) || 0;
+      case 'statut': return row.dataset.statut || '';
+      case 'conseiller': return row.dataset.conseiller || '';
+      default: return '';
+    }
+  };
+
+  rows.sort((a, b) => {
+    const va = getValue(a);
+    const vb = getValue(b);
+    const dir = currentSort.dir === 'asc' ? 1 : -1;
+    if (typeof va === 'number') return (va - vb) * dir;
+    return va.localeCompare(vb, 'fr') * dir;
+  });
+
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+async function loadData() {
+  try {
+    const resp = await fetch('data.json');
+    if (!resp.ok) throw new Error('data.json non trouvé');
+    const data = await resp.json();
+    allDpe = data.dpe || [];
+  } catch(e) {
+    // Données de démo si data.json absent
+    allDpe = [
+      { numero_dpe:'2669E0885781J', date_reception_dpe:'2026-04-28', adresse_ban:'56 Rue Paul Bert', code_postal_ban:'69003', nom_commune_ban:'Lyon', etiquette_dpe:'E', type_batiment:'appartement', zone:'Dauphiné-Lacassagne', surface_habitable_logement:31, etage_str:'1e', digicode_str:'1934', numero_dpe_remplace:null },
+      { numero_dpe:'2669E0894312M', date_reception_dpe:'2026-04-27', adresse_ban:'57 Cours de la Liberté', code_postal_ban:'69003', nom_commune_ban:'Lyon', etiquette_dpe:'D', type_batiment:'appartement', zone:'Part-Dieu', surface_habitable_logement:32, etage_str:'3e', digicode_str:'—', numero_dpe_remplace:'2669E0854519Z' },
+      { numero_dpe:'2669E0891079D', date_reception_dpe:'2026-04-26', adresse_ban:'89 Rue Paul Bert', code_postal_ban:'69003', nom_commune_ban:'Lyon', etiquette_dpe:'G', type_batiment:'appartement', zone:'Montchat', surface_habitable_logement:80, etage_str:'5e', digicode_str:'—', numero_dpe_remplace:null },
+    ];
+  }
+
+  loadAssignments();
+  updateStats(allDpe);
+
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = allDpe.map(renderRow).join('');
+
+  applyFiltres();
+}
+
+// Filtres en temps réel
+['search','filter-zone','filter-dpe','filter-statut','filter-conseiller','filter-type','filter-logement'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', applyFiltres);
+  el.addEventListener('change', applyFiltres);
+});
+
+loadData();
+</script>
+</body>
+</html>
