@@ -1,0 +1,53 @@
+name: 🏠 DPE Prospector — Pernéty
+
+on:
+  schedule:
+    - cron: "0 3 * * 1-6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  surveiller-dpe:
+    name: Surveillance DPE Pernéty
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: 🐍 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Dépendances
+        run: pip install requests
+
+      - name: 💾 Restauration cache DPE
+        uses: actions/cache@v4
+        with:
+          path: dpe_cache.json
+          key: dpe-cache-${{ github.run_number }}
+          restore-keys: |
+            dpe-cache-
+
+      - name: 🔍 Surveillance DPE
+        env:
+          EMAIL_EXPEDITEUR:   ${{ secrets.EMAIL_EXPEDITEUR }}
+          EMAIL_DESTINATAIRE: ${{ secrets.EMAIL_DESTINATAIRE }}
+          EMAIL_MOT_DE_PASSE: ${{ secrets.EMAIL_MOT_DE_PASSE }}
+        run: python dpe_monitor.py
+
+      - name: 📊 Commit data.json
+        run: |
+          git config user.name "DPE Prospector Bot"
+          git config user.email "actions@github.com"
+          git add data.json
+          git diff --staged --quiet || git commit -m "📊 Mise à jour data.json [$(date '+%d/%m/%Y')]"
+          git push
